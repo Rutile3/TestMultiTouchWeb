@@ -2,9 +2,9 @@
 ## :green_book: 概要
 ChromiumnでマルチタップがおこなえるWebページを作成しました。
 
-## 確認環境
-- :computer:PC: AUSU T101HA-GR031T
-- :globe_with_meridians:ブラウザ: Chromium
+## :green_book: 確認環境
+- :computer:AUSU T101HA-GR031T
+- :globe_with_meridians:Chromium
 
 ## 🎫 License
 - [MIT](https://raw.githubusercontent.com/aocattleya/Ramen-Timer/master/LICENSE)  
