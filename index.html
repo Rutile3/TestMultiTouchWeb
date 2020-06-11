@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="jp">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>マルチタッチ</title>
+
+  <style>
+    #canvas {
+      border: 1px solid #333333;
+    }
+  </style>
+  <script type="text/javascript">
+    // ひとつ前のタッチ情報を保持
+    // これをもとに線などを描画する
+    let ongoingTouches = [];
+
+    // 指でタッチし始めたときに呼び出される
+    // 丸を描画
+    function handleStart(event) {
+      // ブラウザーがタッチイベントの処理を続けないようにするために必要？
+      event.preventDefault();
+
+      const canvas = document.getElementsByTagName('canvas')[0];
+      const ctx = canvas.getContext('2d');
+      const touches = event.changedTouches;
+
+      // アクティブなタッチポイントの配列を取得し、
+      // それを元に描画
+      for (let i = 0; i < touches.length; i++) {
+        const touche = touches[i];
+
+        // 描画
+        // 画面の左端からの座標でやっているので若干ずれていると思われる
+        ctx.beginPath();
+        const color = colorForTouch(touche);
+        ctx.arc(touche.pageX, touche.pageY, 4, 0, 2 * Math.PI, false);
+        ctx.fill();
+
+        // タッチ情報を保存
+        ongoingTouches.push(copyTouch(touche));
+      }
+    }
+
+    // 一本以上の指が移動するたびに呼び出される
+    // 線を描画
+    function handleMove(event) {
+      event.preventDefault();
+
+      const canvas = document.getElementsByTagName("canvas")[0];
+      const ctx = canvas.getContext("2d");
+      const touches = event.changedTouches;
+
+      for (let i = 0; i < touches.length; i++) {
+        const touche = touches[i];
+        const idx = ongoingTouchIndexById(touche.identifier);
+
+        if (idx >= 0) {
+          const ongoingTouche = ongoingTouches[idx];
+
+          ctx.beginPath();
+          ctx.moveTo(ongoingTouche.pageX, ongoingTouche.pageY);
+          ctx.lineTo(touche.pageX, touche.pageY);
+          ctx.lineWidth = 4;
+          ctx.strokeStyle = colorForTouch(touche);
+          ctx.stroke();
+
+          // 現在タッチ情報に上書き
+          ongoingTouches.splice(idx, 1, copyTouch(touche));
+        }
+      }
+    }
+
+    // 指を放した呼び出される？
+    // 線と四角を描画
+    function handleEnd(event) {
+      event.preventDefault();
+
+      const canvas = document.getElementsByTagName("canvas")[0];
+      const ctx = canvas.getContext("2d");
+      const touches = event.changedTouches;
+
+      for (let i = 0; i < touches.length; i++) {
+        const touche = touches[i];
+        const idx = ongoingTouchIndexById(touche.identifier);
+
+        if (idx >= 0) {
+          const ongoingTouche = ongoingTouches[idx];
+          ctx.beginPath();
+          ctx.lineWidth = 4;
+          ctx.fillStyle = colorForTouch(touche);
+          ctx.moveTo(ongoingTouche.pageX, ongoingTouche.pageY);
+          ctx.lineTo(touche.pageX, touche.pageY);
+          ctx.fillRect(touche.pageX - 4, touche.pageY - 4, 8, 8);
+
+          // タッチ情報を削除
+          ongoingTouches.splice(idx, 1);
+        }
+      }
+    }
+
+    // 指を放す以外の理由でタッチをキャンセルする場合に呼び出される
+    // 何も描画しない
+    function handleCancel(event) {
+      event.preventDefault();
+      const touches = event.changedTouches;
+
+      for (let i = 0; i < touches.length; i++) {
+        // タッチ情報を削除
+        const idx = ongoingTouchIndexById(touches[i].identifier);
+        ongoingTouches.splice(idx, 1);
+      }
+    }
+
+    //  Touch.identifierから色を生成
+    function colorForTouch(touch) {
+      const r = Math.floor(touch.identifier *  3) % 16;
+      const g = Math.floor(touch.identifier *  7) % 16;
+      const b = Math.floor(touch.identifier * 11) % 16;
+
+      const toHex = (dig) => dig.toString(16);
+
+      const color = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+      return color;
+    }
+
+    // 指定されたタッチ情報の識別子があるindexを返す
+    function ongoingTouchIndexById(identifier) {
+      for (let i = 0; i < ongoingTouches.length; i++) {
+        if (ongoingTouches[i].identifier == identifier) {
+          return i;
+        }
+      }
+
+      return -1; // 見つからない場合
+    }
+
+    // touchオブジェクトの複製
+    function copyTouch(touch) {
+      return {
+        identifier: touch.identifier,
+        pageX: touch.pageX,
+        pageY: touch.pageY
+      };
+    }
+
+    function startup() {
+      // イベントハンドラの設定
+      const canvas = document.getElementsByTagName("canvas")[0];
+      canvas.addEventListener('touchstart' , handleStart , false);
+      canvas.addEventListener('touchend'   , handleEnd   , false);
+      canvas.addEventListener('touchcancel', handleCancel, false);
+      canvas.addEventListener('touchmove'  , handleMove  , false);
+    }
+  </script>
+</head>
+
+<body>
+  <canvas id="canvas" width="600" height="400">
+    この領域をタッチ！！
+  </canvas>
+  <button onclick="startup()">初期化</button>
+</body>
+
+</html>
