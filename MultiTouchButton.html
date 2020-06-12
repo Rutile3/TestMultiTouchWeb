@@ -27,16 +27,57 @@
 
     #left-button,
     #right-button {
-      height: 100%;
       width: 50%;
     }
-
   </style>
   <script type="text/javascript">
+    let isTouch = {
+      'left-button':  false,
+      'right-button': false
+    }
+
+    function handleStart(event) {
+      event.preventDefault();
+
+      const buttonId = event.currentTarget.id;
+      isTouch[buttonId] = true;
+
+      if (
+        isTouch['left-button']  === true &&
+        isTouch['right-button'] === true) {
+        console.log('同時押し');
+      }
+    }
+
+    function handleEnd(event) {
+      event.preventDefault();
+
+      const buttonId = event.currentTarget.id;
+      isTouch[buttonId] = false;
+    }
+
+    function handleCancel(event) {
+      event.preventDefault();
+
+      const buttonId = event.currentTarget.id;
+      isTouch[buttonId] = false;
+    }
+
+    function init() {
+      const left = document.querySelector("#left-button");
+      const right = document.querySelector("#right-button");
+
+      left.addEventListener('touchstart', handleStart, false);
+      left.addEventListener('touchend', handleEnd, false);
+      left.addEventListener('touchcancel', handleCancel, false);
+      right.addEventListener('touchstart', handleStart, false);
+      right.addEventListener('touchend', handleEnd, false);
+      right.addEventListener('touchcancel', handleCancel, false);
+    }
   </script>
 </head>
 
-<body>
+<body onload="init()">
   <div id="buttons">
     <button id="left-button">左</button>
     <button id="right-button">右</button>
