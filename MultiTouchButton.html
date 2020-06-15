@@ -20,14 +20,15 @@
     }
 
     #buttons {
-      display: flex;
-      height: 100%;
+      display: grid;
+		  grid-template-columns: repeat(3, 1fr);
       width: 100%;
+      height: 100%;
     }
-
-    #left-button,
-    #right-button {
-      width: 50%;
+    
+    button {
+      width: 100%;
+      height: 100%;
     }
   </style>
   <script type="text/javascript">
@@ -36,17 +37,28 @@
       'right-button': false
     }
 
+    function ViewTouchStatus() {
+      const div = document.getElementById('touch-status');
+      if (isTouch['left-button'] && isTouch['right-button']) {
+        div.innerHTML = '左右同時押し';
+      }
+      else if (isTouch['left-button']) {
+        div.innerHTML = '左が押されています';
+      }
+      else if (isTouch['right-button']) {
+        div.innerHTML = '右が押されています';
+      }
+      else {
+        div.innerHTML = '押されていません';
+      }
+    }
+
     function handleStart(event) {
       event.preventDefault();
 
       const buttonId = event.currentTarget.id;
       isTouch[buttonId] = true;
-
-      if (
-        isTouch['left-button']  === true &&
-        isTouch['right-button'] === true) {
-        console.log('同時押し');
-      }
+      ViewTouchStatus();
     }
 
     function handleEnd(event) {
@@ -54,6 +66,7 @@
 
       const buttonId = event.currentTarget.id;
       isTouch[buttonId] = false;
+      ViewTouchStatus();
     }
 
     function handleCancel(event) {
@@ -61,6 +74,7 @@
 
       const buttonId = event.currentTarget.id;
       isTouch[buttonId] = false;
+      ViewTouchStatus();
     }
 
     function init() {
@@ -80,6 +94,7 @@
 <body onload="init()">
   <div id="buttons">
     <button id="left-button">左</button>
+    <div id="touch-status"></div>
     <button id="right-button">右</button>
   </div>
 </body>
