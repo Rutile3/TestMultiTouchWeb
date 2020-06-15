@@ -78,15 +78,15 @@
     }
 
     function init() {
-      const left = document.querySelector("#left-button");
+      const left  = document.querySelector("#left-button");
       const right = document.querySelector("#right-button");
 
-      left.addEventListener('touchstart', handleStart, false);
-      left.addEventListener('touchend', handleEnd, false);
-      left.addEventListener('touchcancel', handleCancel, false);
-      right.addEventListener('touchstart', handleStart, false);
-      right.addEventListener('touchend', handleEnd, false);
-      right.addEventListener('touchcancel', handleCancel, false);
+      left.addEventListener('pointerdown'   , handleStart , false);
+      left.addEventListener('pointerup'     , handleEnd   , false);
+      left.addEventListener('pointercancel' , handleCancel, false);
+      right.addEventListener('pointerdown'  , handleStart , false);
+      right.addEventListener('pointerup'    , handleEnd   , false);
+      right.addEventListener('pointercancel', handleCancel, false);
     }
   </script>
 </head>
