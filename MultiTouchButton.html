@@ -9,6 +9,7 @@
   <style>
     * {
       box-sizing: border-box;
+      font-size: 128px;
       padding: 0;
       margin: 0;
     }
@@ -29,8 +30,16 @@
       width: 100%;
       height: 100%;
     }
+
+    #touch-status {
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     
     button {
+      text-align: center;
       width: 100%;
       height: 100%;
     }
@@ -47,16 +56,16 @@
     function ViewTouchStatus() {
       const div = document.getElementById('touch-status');
       if (isTouch['left-button'] && isTouch['right-button']) {
-        div.innerHTML = '左右同時押し';
+        div.innerHTML = '左右';
       }
       else if (isTouch['left-button']) {
-        div.innerHTML = '左が押されています';
+        div.innerHTML = '左';
       }
       else if (isTouch['right-button']) {
-        div.innerHTML = '右が押されています';
+        div.innerHTML = '右';
       }
       else {
-        div.innerHTML = '押されていません';
+        div.innerHTML = '';
       }
     }
 
