@@ -3,15 +3,22 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>マルチタッチ</title>
 
   <style>
+    html, css{
+      touch-action:none; /* ズーム禁止*/
+    }
+
     #canvas {
       border: 1px solid #333333;
     }
   </style>
   <script type="text/javascript">
+    // 右クリック禁止
+    document.oncontextmenu = function () {return false;}
+
     // ひとつ前のタッチ情報を保持
     // これをもとに線などを描画する
     let ongoingTouches = [];
